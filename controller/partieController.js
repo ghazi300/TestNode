@@ -44,24 +44,29 @@ async function getbyid(req, res) {
   }
 }
 
-async function attaque(req, res) {
-  try {
-    const j1 = await Joueur.findById(req.params.id1);
-    const j2 = await Joueur.findById(req.params.id2);
-    score1 = j1.score + 20;
-    sante1 = j2.sante - 10;
-    const j1u = await Joueur.findByIdAndUpdate(req.params.id1, {
-      score: score1,
-    });
-    const j2u = await Joueur.findByIdAndUpdate(req.params.id2, {
-      sante: sante1,
-    });
-    res.status(200).send(j1u + "....." + j2u);
-  } catch (err) {
-    res.status(400).send(err);
+async function attaque(io,id1,id2){
+  try{
+    const {j1,j2} = await getbyidsocket({id1,id2});
+    const score1 = j1.score + 20;
+    j2.sante = j2.sante - 10;
+    if(j1.score >= 100 || j2.sante <= 0 ){
+      io.emit("fini",j1.pseudo.toString()+" a gagné!");
+    }
+    if(j2.score >= 100 || j1.sante <= 0 ){
+      io.emit("fini",j2.pseudo.toString()+" a gagné!");
+    }
+    else{
+      j1.score = score1;
+      await Joueur.findByIdAndUpdate(j1._id,j1);
+      await Joueur.findByIdAndUpdate(j2._id, j2);
+      const r = { j1: j1, j2: j2 };
+      io.emit("aff",r);
+      console.log("Success!")
+    }
+  }catch(err){
+    console.log("Error : "+err.message);
   }
 }
-
 async function addpartie(req, res) {
   try {
     //console.log("data", req.body);

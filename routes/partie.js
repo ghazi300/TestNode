@@ -11,6 +11,7 @@ router.get("/getalljoueur", partirController.getall);
 router.get("/getjoueur/:id", partirController.getbyid);
 router.delete("/deletejoueur/:id", partirController.deletejoueur);
 router.put("/attaque/:id1/:id2", partirController.attaque);
-router.put("/newpartie/:id1/:id2", partirController.addpartie);
+router.post("/newpartie/:id1/:id2", partirController.addpartie);
+
 
 module.exports = router;

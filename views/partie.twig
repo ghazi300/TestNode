@@ -15,13 +15,14 @@
         <br>
         <button onclick="send()">Envoyer</button>
         <button onclick="aff()">Afficher Stat</button>
+        <button onclick="attack()">Attaque</button>
+        <button onclick="contreAttack()">Contre-attaque</button>
+
     </center>
 
     <script>
         const socket=io.connect();
 
-
-   
 
         socket.on("partie",(data)=>{
             p=document.createElement("p")
@@ -34,18 +35,21 @@
             p.innerHTML=(data.j1.pseudo)
             document.body.append(p)
         })
+         socket.on("fini",data=>{
+            window.alert(data);
+        })
 
     
         function send(){
             //console.log("msg"+x.value)
 
             partie={
-                nom:nom.value,
                 id1:id1.value,
                 id2:id2.value
             }
             socket.emit("partie",partie)
         }
+        
 
         function aff(){
 
@@ -56,6 +60,26 @@
             }
             socket.emit("aff",partie)
         }
+
+        function attack(){
+            data={
+                j1:id1.value,
+                j2:id2.value
+            }
+            socket.emit("attack",data)
+        }
+
+        function contreAttack(){
+            data={
+                j1:id2.value,
+                j2:id1.value
+            }
+            socket.emit("attack",data)
+        }
+           socket.on("fini",data=>{
+            window.alert(data);
+        })
+
 
      
 

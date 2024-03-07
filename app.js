@@ -4,7 +4,7 @@ const config = require("./config/dbconnection.json");
 const mongo = require("mongoose");
 const bodyparser = require("body-parser");
 const path = require("path");
-const{addpartiesocket,getbyidsocket}=require('./controller/partieController')
+const{addpartiesocket,getbyidsocket,attaque,contreAttaque}=require('./controller/partieController')
 mongo
   .connect(config.url, {
     useNewUrlParser: true,
@@ -50,6 +50,10 @@ io.on("connection", (socket) => {
   socket.on("typing", (data) => {
     socket.broadcast.emit("typing", data);
   });
+  socket.on("attack",data=>{
+    attaque(io,data.j1,data.j2);
+  });
+
   socket.on("disconnect", () => {
     io.emit("msg", "An user is disconnected");
   });
